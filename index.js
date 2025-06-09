@@ -77,10 +77,10 @@ async function sortHackerNewsArticles() {
           moreLinks.click(),
         ]);
       }
-      else {
-        // stops generating pages
-        break;
-      }
+    }
+    else {
+      // stops generating pages
+      break;
     }
   }
 
