@@ -19,7 +19,7 @@ async function sortHackerNewsArticles() {
   await page.goto("https://news.ycombinator.com/newest");
 
   const articles = [];
-  const unId = new Set();
+  // const unId = new Set();
 
   // checks the current list length
   while (articles.length < 100) {
@@ -32,8 +32,8 @@ async function sortHackerNewsArticles() {
         // grabs the link
         const link = row.querySelector('.titleline > a').href;
         // grabs identifier for each
-        const id = row.getAttribute('id');
-        return {id, title, link};
+        // const id = row.getAttribute('id');
+        return {title, link};
       });
     });
   
@@ -54,8 +54,8 @@ async function sortHackerNewsArticles() {
       if (articles.length >= 100) break;
 
       // skips duplicates
-      const id = items[i].id;
-      if (!id || unId.has(id)) continue;
+      // const id = items[i].id;
+      // if (!id || unId.has(id)) continue;
 
       // checks subtext of each
       if (subtexts[i]) {
