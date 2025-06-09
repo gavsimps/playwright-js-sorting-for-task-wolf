@@ -43,10 +43,23 @@ async function sortHackerNewsArticles() {
     const subtext = Array.from(document.querySelectorAll('tr.athing + tr'));
 
     for (let i = 0; i < items.length && results.length < 100; i++) {
-      const title = items[i].querySelector('.titleline > a').innerHTML;
-      
+      const titleT = items[i].querySelector('.titleline > a');
+      const title = titleT?.innerHTML;
+      const link = titleT?.href;
+
+      const dateS = subtext[i]?.querySelector('span.age > a')?.getAttribute('title');
+
+      if (dateS) {
+        const date = new Date(dateS);
+        results.push({title, link, date});
+      }
     }
-  })
+
+    return results.sort((a, b) => b.date - a.date);
+  });
+
+  // console logging the sorted array
+  console.log(articles.slice(0,100));
 
 
   // checks the current list length
@@ -113,10 +126,7 @@ async function sortHackerNewsArticles() {
 
 
   // sort by date (newest first)
-  articles.sort((a,b) => b.date - a.date);
-
-  // console logging the sorted array
-  console.log(articles.slice(0,100));
+  // articles.sort((a,b) => b.date - a.date);
 
 }
 
