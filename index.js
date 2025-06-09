@@ -26,15 +26,15 @@ async function sortHackerNewsArticles() {
     const curCount = await page.$$eval('tr.athing', rows => rows.length);
     numArticles = curCount;
 
-    if (numArticles < 100) {
-      const moreLinks = await page.$('a.morelink');
-      if (!moreLinks) break;
-      await Promise.all([
-        // constant loops - broken
-        page.waitForLoadState('load'),
-        moreLinks.click(),
-      ]);
-    }
+    // if (numArticles < 100) {
+    //   const moreLinks = await page.$('a.morelink');
+    //   if (!moreLinks) break;
+    //   await Promise.all([
+    //     // constant loops - broken
+    //     page.waitForLoadState('load'),
+    //     moreLinks.click(),
+    //   ]);
+    // }
   }
 
   const articles = await page.evaluate(() => {
