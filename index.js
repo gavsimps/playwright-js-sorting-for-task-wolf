@@ -54,6 +54,18 @@ async function sortHackerNewsArticles() {
     return results.slice(0,100);
   });
 
+  await page.evaluate(() => {
+    for (let i = 100; i < articles.length; i++) {
+      const articleRow = articles[i];
+      const subtextRow = subtexts[i];
+
+      articleRow.style.display = 'none';
+      if (subtextRow) {
+        subtextRow.style.display = 'none';
+      }
+    }
+  })
+
   // console.log(articles)
 }
 
