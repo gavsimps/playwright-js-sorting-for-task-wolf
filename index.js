@@ -18,116 +18,43 @@ async function sortHackerNewsArticles() {
   // go to Hacker News
   await page.goto("https://news.ycombinator.com/newest");
 
-  let numArticles = 0;
-  // const articles = [];
-  // const unId = new Set();
+  while (true) {
+    const articleCount = await page.$$eval('ttr.athing', rows => rows.length);
+    if (articleCount >= 100) break;
 
-  while (numArticles < 100) {
-    const curCount = await page.$$eval('tr.athing', rows => rows.length);
-    numArticles = curCount;
+    const moreLinks = await page.$('a.morerlink');
+    if (!moreLinks) break;
 
-    // if (numArticles < 100) {
-    //   const moreLinks = await page.$('a.morelink');
-    //   if (!moreLinks) break;
-    //   await Promise.all([
-    //     // constant loops - broken
-    //     page.waitForLoadState('load'),
-    //     moreLinks.click(),
-    //   ]);
-    // }
+    await Promise.all([
+      page.waitForLoadState('load'),
+      moreLinks.click()
+    ]);
   }
 
   const articles = await page.evaluate(() => {
-    const results = [];
     const items = Array.from(document.querySelectorAll('tr.athing'));
-    const subtext = Array.from(document.querySelectorAll('tr.athing + tr'));
+    const subtexts = Array.from(document.querySelectorAll('tr.athing > a'));
+    const results = [];
 
     for (let i = 0; i < items.length && results.length < 100; i++) {
-      const titleT = items[i].querySelector('.titleline > a');
-      const title = titleT?.innerHTML;
+      const row = items[i];
+      const subtext = subtexts[i];
+      const titleT = row.querySelector('.titleline > a');
+      const title = titleT?.innerText;
       const link = titleT?.href;
+      const dateS = subtext?.querySelector('span.age > a')?.getAttribute('title');
+      const date = new Date(dateS);
 
-      const dateS = subtext[i]?.querySelector('span.age > a')?.getAttribute('title');
-
-      if (dateS) {
-        const date = new Date(dateS);
+      if (title && link && date) {
         results.push({title, link, date});
       }
     }
 
-    return results.sort((a, b) => b.date - a.date);
+    results.sort((a, b) => b.date - a.date);
+    return results.slice(0,100);
   });
 
-  // console logging the sorted array
-  console.log(articles.slice(0,100));
-
-
-  // checks the current list length
-  // while (articles.length < 100) {
-  //   // evaluates page for all elements matching 'tr' with class of 'athing'
-  //   const items = await page.$$eval('tr.athing', rows => {
-  //     // takes array of items and goes through each
-  //     return rows.map(row => {
-  //       // grabs innerHTML of a tag after class 'titleline'
-  //       const title = row.querySelector('.titleline > a').innerHTML;
-  //       // grabs the link
-  //       const link = row.querySelector('.titleline > a').href;
-  //       // grabs identifier for each
-  //       // const id = row.getAttribute('id');
-  //       return {title, link};
-  //     });
-  //   });
-  
-
-
-  //   // evaluates page for tr with class 'athing' with a subsequent tr
-  //   const subtexts = await page.$$eval('tr.athing + tr', rows => {
-  //     return rows.map(row => {
-  //       // looks for span tage with class age and an a tag
-  //       const artDate = row.querySelector('span.age > a');
-  //       // looks through and grabs the title attribute
-  //       const artTime = artDate?.getAttribute('title');
-  //       return artTime;
-  //     });
-  //   });
-
-
-
-  //   for (let i = 0; i < items.length; i++) {
-  //     // stops running if list hits 100 or more
-  //     if (articles.length >= 100) break;
-
-  //     // skips duplicates
-  //     // const id = items[i].id;
-  //     // if (!id || unId.has(id)) continue;
-
-  //     // checks subtext of each
-  //     if (subtexts[i]) {
-  //       // converts artTime to Date
-  //       const date = new Date(subtexts[i]);
-  //       // adds items and then Date to each item in array 'articles'
-  //       articles.push({...items[i], date});
-  //       unId.add(id)
-  //     }
-  //   }
-
-  //   // since page doesnt show more than 30 entries
-  //   if (articles.length < 100) {
-  //     const moreLinks = await page.$('a.morelink');
-  //     if (!moreLinks) break;
-  //     await Promise.all([
-  //       // constant loops - broken
-  //       page.waitForLoadState('load'),
-  //       moreLinks.click(),
-  //     ]);
-  //   }
-  // }
-
-
-
-  // sort by date (newest first)
-  // articles.sort((a,b) => b.date - a.date);
-
+  // console.log(articles)
 }
 
 
