@@ -84,6 +84,7 @@ async function sortHackerNewsArticles() {
       const moreLinks = await page.$('a.morelink');
       if (moreLinks) {
         await Promise.all([
+          // constant loops - broken
           page.waitForLoadState('load'),
           moreLinks.click(),
         ]);
