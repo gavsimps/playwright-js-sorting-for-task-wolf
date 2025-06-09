@@ -38,12 +38,12 @@ async function sortHackerNewsArticles() {
         const title = titleT.innerText;
         const link = titleT.href;
         
-        const dateS = subtext.querySelector('span.age > a').getAttribute('title');
+        const dateS = subtext.querySelector('span.age').getAttribute('title');
         console.log(dateS)
         const date = new Date(dateS);
 
         if (title && link && date) {
-          results.push({title, link,date});
+          results.push({title, link, date});
         }
       }
 
